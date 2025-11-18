@@ -253,6 +253,7 @@
       <button class="btn-secondary" onclick="marcarTodos(false)">Desmarcar todos</button>
       <button class="btn-primary" onclick="marcarTodos(true)">Marcar todos</button>
       <button class="btn-primary" onclick="exportarJSON()">Exportar JSON</button>
+      <button class="btn-primary" onclick="exportarHTML()">Exportar HTML</button>
     </div>
   </div>
 
@@ -2194,6 +2195,82 @@
 
       URL.revokeObjectURL(url);
     }
+
+function exportarHTML() {
+  // Clona apenas o card (árvore)
+  const container = document.querySelector(".card").cloneNode(true);
+
+  // Remover botões que não devem aparecer
+  container.querySelectorAll(".btn-pill").forEach(btn => btn.remove());
+  container.querySelectorAll(".btn-primary").forEach(btn => btn.remove());
+  container.querySelectorAll(".btn-secondary").forEach(btn => btn.remove());
+
+  // Expande tudo ao exportar
+  container.querySelectorAll("ul").forEach(ul => ul.style.display = "block");
+  container.querySelectorAll(".arrow-icon").forEach(ico => ico.style.transform = "rotate(90deg)");
+
+  // 🔥 Corrigir checkboxes: adicionar atributo "checked"
+  container.querySelectorAll('.menu-checkbox').forEach(cb => {
+    if (cb.checked) {
+      cb.setAttribute("checked", "checked");
+    } else {
+      cb.removeAttribute("checked");
+    }
+  });
+
+  // Monta o HTML final
+  const htmlFinal = `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Permissões Exportadas</title>
+<style>
+body{
+  font-family: system-ui, Arial;
+  background:#f3f4f6;
+  padding:20px;
+}
+.card{
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:12px;
+  padding:20px;
+  max-width:900px;
+  margin:auto;
+}
+.tree-line{display:flex;align-items:center;gap:6px;margin:4px 0;}
+.menu-checkbox{
+  width:14px;height:14px;border:1px solid #666;border-radius:3px;
+}
+.menu-checkbox:checked{
+  background:#0C6C94;border-color:#0C6C94;
+}
+ul{margin-left:20px;list-style:none;}
+.arrow-icon{
+  width:12px;
+  transform:rotate(90deg);
+  opacity:0.6;
+}
+</style>
+</head>
+<body>
+<h2>Permissões exportadas</h2>
+${container.innerHTML}
+</body>
+</html>
+`;
+
+  // Baixar arquivo
+  const blob = new Blob([htmlFinal], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "permissoes_exportadas.html";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 
     document.addEventListener('DOMContentLoaded', construirArvoreMenus);
   </script>
