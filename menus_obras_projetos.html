@@ -257,6 +257,7 @@
     </div>
   </div>
 
+  <!-- Texto bruto da árvore -->
   <script type="text/plain" id="raw-menus">
 [01] Projeto
    [01.01] Básico
@@ -2197,71 +2198,75 @@
     }
 
 function exportarHTML() {
-  // Clona apenas o card (árvore)
   const container = document.querySelector(".card").cloneNode(true);
 
-  // Remover botões que não devem aparecer
-  container.querySelectorAll(".btn-pill").forEach(btn => btn.remove());
-  container.querySelectorAll(".btn-primary").forEach(btn => btn.remove());
-  container.querySelectorAll(".btn-secondary").forEach(btn => btn.remove());
+  // remove botões da tela exportada
+  container.querySelectorAll(".btn-pill, .btn-primary, .btn-secondary")
+           .forEach(btn => btn.remove());
 
-  // Expande tudo ao exportar
+  // deixa tudo expandido no HTML exportado (como visual) 
   container.querySelectorAll("ul").forEach(ul => ul.style.display = "block");
-  container.querySelectorAll(".arrow-icon").forEach(ico => ico.style.transform = "rotate(90deg)");
+  container.querySelectorAll(".arrow-icon").forEach(icon => {
+    icon.style.transform = "rotate(90deg)";
+  });
 
-  // 🔥 Corrigir checkboxes: adicionar atributo "checked"
-  container.querySelectorAll('.menu-checkbox').forEach(cb => {
-    if (cb.checked) {
-      cb.setAttribute("checked", "checked");
-    } else {
-      cb.removeAttribute("checked");
+  // força os lis a receberem collapsed quando tiverem filhos
+  container.querySelectorAll("li").forEach(li => {
+    const ul = li.querySelector(':scope > ul');
+    if (ul && ul.children.length > 0) {
+      li.classList.add('collapsed-export'); // classe especial para exportação
     }
   });
 
-  // Monta o HTML final
-  const htmlFinal = `
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Permissões Exportadas</title>
-<style>
-body{
-  font-family: system-ui, Arial;
-  background:#f3f4f6;
-  padding:20px;
-}
-.card{
-  background:#fff;
-  border:1px solid #ddd;
-  border-radius:12px;
-  padding:20px;
-  max-width:900px;
-  margin:auto;
-}
-.tree-line{display:flex;align-items:center;gap:6px;margin:4px 0;}
-.menu-checkbox{
-  width:14px;height:14px;border:1px solid #666;border-radius:3px;
-}
-.menu-checkbox:checked{
-  background:#0C6C94;border-color:#0C6C94;
-}
-ul{margin-left:20px;list-style:none;}
-.arrow-icon{
-  width:12px;
-  transform:rotate(90deg);
-  opacity:0.6;
-}
-</style>
-</head>
-<body>
-<h2>Permissões exportadas</h2>
-${container.innerHTML}
-</body>
-</html>
-`;
+  // checkbox travados no export
+  container.querySelectorAll(".menu-checkbox").forEach(cb => {
+    if (cb.checked) cb.setAttribute("checked", "checked");
+    cb.setAttribute("disabled", "disabled");
+  });
 
-  // Baixar arquivo
+  let htmlFinal = "";
+  htmlFinal += "<!DOCTYPE html>";
+  htmlFinal += "<html lang='pt-BR'>";
+  htmlFinal += "<head>";
+  htmlFinal += "<meta charset='UTF-8'>";
+  htmlFinal += "<title>Permissões Exportadas</title>";
+  htmlFinal += "<style>";
+  htmlFinal += "body{font-family:system-ui,Arial;background:#f3f4f6;padding:20px;}";
+  htmlFinal += ".card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:20px;max-width:900px;margin:auto;}";
+  htmlFinal += ".tree-line{display:flex;align-items:center;gap:6px;margin:4px 0;}";
+  htmlFinal += ".menu-checkbox{width:14px;height:14px;border:1px solid #666;border-radius:3px;}";
+  htmlFinal += ".menu-checkbox:checked{background:#0C6C94;border-color:#0C6C94;}";
+  htmlFinal += "ul{margin-left:20px;list-style:none;}";
+  htmlFinal += ".toggle-arrow{cursor:pointer;}";
+  htmlFinal += ".arrow-icon{width:12px;transition:0.2s;}";
+  htmlFinal += ".collapsed-export > ul { display: none; }"; 
+  htmlFinal += "</style>";
+  htmlFinal += "</head>";
+  htmlFinal += "<body>";
+  htmlFinal += "<h2 style='text-align:center;color:#0C6C94;'>Permissões exportadas</h2>";
+  htmlFinal += container.innerHTML;
+
+  // SCRIPT da página exportada
+  htmlFinal += "<script>";
+  htmlFinal += "document.querySelectorAll('.toggle-arrow').forEach(function(arrow){";
+  htmlFinal += "  arrow.addEventListener('click', function(){";
+  htmlFinal += "    var li = arrow.closest('li');";
+  htmlFinal += "    var ul = li.querySelector(':scope > ul');";
+  htmlFinal += "    var icon = arrow.querySelector('.arrow-icon');";
+  htmlFinal += "    if(!ul) return;";
+  htmlFinal += "    if(li.classList.contains('collapsed-export')){"; // recolhido → expandir
+  htmlFinal += "      li.classList.remove('collapsed-export');";
+  htmlFinal += "      icon.style.transform = 'rotate(90deg)';";
+  htmlFinal += "    } else {";                                          // expandido → recolher
+  htmlFinal += "      li.classList.add('collapsed-export');";
+  htmlFinal += "      icon.style.transform = 'rotate(0deg)';";
+  htmlFinal += "    }";
+  htmlFinal += "  });";
+  htmlFinal += "});";
+  htmlFinal += "<\\/script>";
+
+  htmlFinal += "</body></html>";
+
   const blob = new Blob([htmlFinal], { type: "text/html" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -2271,8 +2276,8 @@ ${container.innerHTML}
   URL.revokeObjectURL(url);
 }
 
-
     document.addEventListener('DOMContentLoaded', construirArvoreMenus);
   </script>
+
 </body>
 </html>
