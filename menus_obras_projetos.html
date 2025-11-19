@@ -256,7 +256,7 @@
     </div>
   </div>
 
-  <!-- Texto bruto da árvore -->
+
   <script type="text/plain" id="raw-menus">
 [01] Projeto
    [01.01] Básico
@@ -2167,16 +2167,13 @@
 function exportarHTML() {
   const container = document.querySelector(".card").cloneNode(true);
 
-
   container.querySelectorAll(".btn-pill, .btn-primary, .btn-secondary")
            .forEach(btn => btn.remove());
-
 
   container.querySelectorAll("ul").forEach(ul => ul.style.display = "block");
   container.querySelectorAll(".arrow-icon").forEach(icon => {
     icon.style.transform = "rotate(90deg)";
   });
-
 
   container.querySelectorAll("li").forEach(li => {
     const ul = li.querySelector(':scope > ul');
@@ -2184,7 +2181,6 @@ function exportarHTML() {
       li.classList.add('collapsed-export'); 
     }
   });
-
 
   container.querySelectorAll(".menu-checkbox").forEach(cb => {
     if (cb.checked) cb.setAttribute("checked", "checked");
@@ -2210,9 +2206,15 @@ function exportarHTML() {
   htmlFinal += "</style>";
   htmlFinal += "</head>";
   htmlFinal += "<body>";
-  htmlFinal += "<h2 style='text-align:center;color:#0C6C94;'>Permissões exportadas</h2>";
-  htmlFinal += container.innerHTML;
 
+  htmlFinal += "<h2 style='text-align:center;color:#0C6C94;'>Permissões exportadas</h2>";
+
+
+  const perfil = localStorage.getItem("perfilEscolhido") || "Não informado";
+  htmlFinal += `<h3 style='text-align:center;margin-top:10px;color:#333;'>Perfil configurado: <strong>${perfil}</strong></h3>`;
+
+
+  htmlFinal += container.innerHTML;
 
   htmlFinal += "<script>";
   htmlFinal += "document.querySelectorAll('.toggle-arrow').forEach(function(arrow){";
@@ -2221,10 +2223,10 @@ function exportarHTML() {
   htmlFinal += "    var ul = li.querySelector(':scope > ul');";
   htmlFinal += "    var icon = arrow.querySelector('.arrow-icon');";
   htmlFinal += "    if(!ul) return;";
-  htmlFinal += "    if(li.classList.contains('collapsed-export')){"; 
+  htmlFinal += "    if(li.classList.contains('collapsed-export')){";
   htmlFinal += "      li.classList.remove('collapsed-export');";
   htmlFinal += "      icon.style.transform = 'rotate(90deg)';";
-  htmlFinal += "    } else {";                                          
+  htmlFinal += "    } else {";
   htmlFinal += "      li.classList.add('collapsed-export');";
   htmlFinal += "      icon.style.transform = 'rotate(0deg)';";
   htmlFinal += "    }";
@@ -2242,6 +2244,7 @@ function exportarHTML() {
   a.click();
   URL.revokeObjectURL(url);
 }
+
 
     document.addEventListener('DOMContentLoaded', construirArvoreMenus);
   </script>

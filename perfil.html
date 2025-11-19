@@ -97,6 +97,7 @@
       text-align: center;
       transition: 0.18s;
       box-shadow: 0 2px 6px rgba(12,108,148,0.25);
+      cursor: pointer;
     }
 
     .profile-button:hover {
@@ -134,15 +135,28 @@
       </p>
 
       <div class="profiles-list">
-        <a href="menus_obras_projetos.html" class="profile-button">Supervisor</a>
-        <a href="menus_obras_projetos.html" class="profile-button">Analista Técnico</a>
-        <a href="menus_obras_projetos.html" class="profile-button">Assistente Técnico</a>
-        <a href="menus_obras_projetos.html" class="profile-button">Estagiário</a>
+
+        <a class="profile-button" onclick="selecionarPerfil('Supervisor')">Supervisor</a>
+
+        <a class="profile-button" onclick="selecionarPerfil('Analista Técnico')">Analista Técnico</a>
+
+        <a class="profile-button" onclick="selecionarPerfil('Assistente Técnico')">Assistente Técnico</a>
+
+        <a class="profile-button" onclick="selecionarPerfil('Estagiário')">Estagiário</a>
+
       </div>
 
     </section>
 
   </main>
+
+  <!-- Script para salvar o perfil e redirecionar -->
+  <script>
+    function selecionarPerfil(nomePerfil) {
+      localStorage.setItem("perfilEscolhido", nomePerfil);
+      window.location.href = "menus_obras_projetos.html";  // coloque o nome da sua página
+    }
+  </script>
 
 </body>
 </html>
