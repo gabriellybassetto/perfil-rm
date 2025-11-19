@@ -2163,28 +2163,29 @@
       });
     }
 
+
 function exportarHTML() {
   const container = document.querySelector(".card").cloneNode(true);
 
-  // remove botões da tela exportada
+
   container.querySelectorAll(".btn-pill, .btn-primary, .btn-secondary")
            .forEach(btn => btn.remove());
 
-  // deixa tudo expandido no HTML exportado (como visual) 
+
   container.querySelectorAll("ul").forEach(ul => ul.style.display = "block");
   container.querySelectorAll(".arrow-icon").forEach(icon => {
     icon.style.transform = "rotate(90deg)";
   });
 
-  // força os lis a receberem collapsed quando tiverem filhos
+
   container.querySelectorAll("li").forEach(li => {
     const ul = li.querySelector(':scope > ul');
     if (ul && ul.children.length > 0) {
-      li.classList.add('collapsed-export'); // classe especial para exportação
+      li.classList.add('collapsed-export'); 
     }
   });
 
-  // checkbox travados no export
+
   container.querySelectorAll(".menu-checkbox").forEach(cb => {
     if (cb.checked) cb.setAttribute("checked", "checked");
     cb.setAttribute("disabled", "disabled");
@@ -2212,7 +2213,7 @@ function exportarHTML() {
   htmlFinal += "<h2 style='text-align:center;color:#0C6C94;'>Permissões exportadas</h2>";
   htmlFinal += container.innerHTML;
 
-  // SCRIPT da página exportada
+
   htmlFinal += "<script>";
   htmlFinal += "document.querySelectorAll('.toggle-arrow').forEach(function(arrow){";
   htmlFinal += "  arrow.addEventListener('click', function(){";
@@ -2220,10 +2221,10 @@ function exportarHTML() {
   htmlFinal += "    var ul = li.querySelector(':scope > ul');";
   htmlFinal += "    var icon = arrow.querySelector('.arrow-icon');";
   htmlFinal += "    if(!ul) return;";
-  htmlFinal += "    if(li.classList.contains('collapsed-export')){"; // recolhido → expandir
+  htmlFinal += "    if(li.classList.contains('collapsed-export')){"; 
   htmlFinal += "      li.classList.remove('collapsed-export');";
   htmlFinal += "      icon.style.transform = 'rotate(90deg)';";
-  htmlFinal += "    } else {";                                          // expandido → recolher
+  htmlFinal += "    } else {";                                          
   htmlFinal += "      li.classList.add('collapsed-export');";
   htmlFinal += "      icon.style.transform = 'rotate(0deg)';";
   htmlFinal += "    }";
@@ -2247,4 +2248,3 @@ function exportarHTML() {
 
 </body>
 </html>
-
