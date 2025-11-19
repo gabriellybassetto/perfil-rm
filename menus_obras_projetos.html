@@ -252,7 +252,6 @@
     <div class="footer-buttons">
       <button class="btn-secondary" onclick="marcarTodos(false)">Desmarcar todos</button>
       <button class="btn-primary" onclick="marcarTodos(true)">Marcar todos</button>
-      <button class="btn-primary" onclick="exportarJSON()">Exportar JSON</button>
       <button class="btn-primary" onclick="exportarHTML()">Exportar HTML</button>
     </div>
   </div>
@@ -2164,39 +2163,6 @@
       });
     }
 
-    /* ---------- EXPORTAR JSON ---------- */
-    function exportarJSON() {
-      const selecionados = [];
-
-      document.querySelectorAll('.menu-checkbox:checked').forEach(cb => {
-        const texto = cb.parentElement.innerText.trim();
-
-        const codigo = texto.split(']')[0].replace('[', '').trim();
-        const nome = texto.split(']')[1].trim();
-
-        selecionados.push({
-          codigo: `(${codigo})`,
-          nome: nome
-        });
-      });
-
-      if (selecionados.length === 0) {
-        alert("Nenhum menu selecionado para exportar!");
-        return;
-      }
-
-      const jsonFinal = JSON.stringify(selecionados, null, 4);
-      const blob = new Blob([jsonFinal], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-
-      a.href = url;
-      a.download = "menus_selecionados.json";
-      a.click();
-
-      URL.revokeObjectURL(url);
-    }
-
 function exportarHTML() {
   const container = document.querySelector(".card").cloneNode(true);
 
@@ -2281,3 +2247,4 @@ function exportarHTML() {
 
 </body>
 </html>
+
